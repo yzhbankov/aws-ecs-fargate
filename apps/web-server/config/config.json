@@ -1,0 +1,9 @@
+{
+  "listenPort": "{{SERVER_PORT}}",
+  "redis": {
+    "port": "{{REDIS_PORT}}"
+  },
+  "db": {
+    "port": "{{DB_PORT}}"
+  }
+}

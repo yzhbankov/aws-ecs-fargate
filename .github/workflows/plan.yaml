@@ -1,0 +1,87 @@
+name: 'Terraform Plan PROD'
+
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  terraform:
+    name: 'Plan Terraform'
+
+    # Only execute if this is a pull request issue and a comment /plan master has been made
+    if: ${{ github.event.issue.pull_request && (github.event.comment.body == '/plan prod') }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    env:
+      environment: prod
+      # These env variables will be passed to the Terraform during its running and will be used to S3 backend and AWS connection
+      # in automatic way
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Check PR base branch name
+        id: base-branch
+        run: |
+          repo_name=${{ github.repository }}
+          pr_number=$(jq --raw-output .issue.number "${{ github.event_path }}")
+          
+          response=$(curl -s \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/$repo_name/pulls/$pr_number")
+          
+          base_branch=$(echo "$response" | jq --raw-output .base.ref)
+          echo "Base branch: $base_branch"
+          
+          if [ $base_branch != master ]; then
+            echo "Skipping. Can run only for PR to a 'master' branch"
+            return
+          fi
+
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: refs/pull/${{ github.event.issue.number }}/merge
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.4.5
+
+      - name: Initialize Terraform
+        working-directory: ./dev-ops/terraform/
+        run: terraform init -reconfigure -upgrade
+
+      - name: Select Terraform workspace
+        run: terraform workspace select -or-create ${environment}
+
+      # Check that all Terraform configuration files adhere to a canonical format
+      - name: Terraform Format
+        working-directory: ./dev-ops/terraform/
+        run: terraform fmt -check -diff -recursive
+
+      # Generate plan
+      - name: Terraform Plan
+        working-directory: ./dev-ops/terraform/
+        continue-on-error: true
+        run: terraform plan -var-file="./env/${environment}.tfvars" -input=false -no-color && terraform show
+
+      # Post a comment with the plan outputs and add the 'planned' label
+      - name: Mark PR as planned
+        env:
+          COMMENT: ${{ github.event.issue.comments_url }}
+          LABEL: ${{ github.event.issue.url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl \
+            -X POST \
+            $LABEL/labels \
+            -H "Content-Type: application/json" \
+            -H "Authorization: token $GITHUB_TOKEN" \
+            -d '["prod_planned"]'
