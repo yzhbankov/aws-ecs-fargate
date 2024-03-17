@@ -1,8 +1,8 @@
 {
-  "name": "web-server",
+  "name": "web-server-app",
   "version": "1.0.0",
   "description": "",
-  "main": "apps/rest-server/app.mjs",
+  "main": "apps/web-server/app.mjs",
   "engines": {
     "node": ">=20.5.1",
     "npm": ">=9.8.0"

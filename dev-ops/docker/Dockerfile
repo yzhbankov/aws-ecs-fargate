@@ -1,11 +1,12 @@
-FROM node:20-alpine as build-alpine
+FROM node:20-alpine
 
-WORKDIR /web-server
+WORKDIR /aws-ecs-fargate
 
 COPY ./dev-ops/docker/entrypoint.sh ./entrypoint.sh
-COPY .. .
+COPY . .
 
 RUN yarn install --frozen-lockfile
+RUN apk add --no-cache bash
 
 EXPOSE 3000
 EXPOSE 6379

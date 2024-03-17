@@ -1,6 +1,6 @@
 #!/bin/bash
 
-yarn start:server:prod &
+yarn start:server &
 
 # Wait for any process to exit
 wait -n

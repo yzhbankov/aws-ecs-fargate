@@ -1,0 +1,27 @@
+{
+  "name": "web-server",
+  "version": "1.0.0",
+  "type": "module",
+  "engines": {
+    "node": ">=14.15.4",
+    "npm": ">=6.14.10"
+  },
+  "scripts": {
+    "reset": "yarn run clean && yarn install",
+    "start:server": "cd apps/web-server && yarn start",
+    "version": "git add .",
+    "postversion": "git push && git push --tags",
+    "version:patch": "yarn config set version-tag-prefix 'v' && yarn config set version-git-message 'v%s' && yarn version --patch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yzhbankov/aws-ecs-fargate#README"
+  },
+  "workspaces": [
+    "apps/web-server"
+  ],
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {},
+  "license": "UNLICENSED"
+}
