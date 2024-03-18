@@ -8,8 +8,8 @@ export class User extends ModelBase {
      * @return {Promise<Object>}
      */
     async save(params) {
-        // todo: implement
-        return params
+        const userUid = UID();
+        return this.repository.users.add({ uid: userUid, ...params });
     }
 
     /**
@@ -19,9 +19,10 @@ export class User extends ModelBase {
      * @return {Promise<Object>}
      */
     async load(params) {
-        // todo: implement
-
-        return params;
+        if (params.uid) {
+            return this.repository.users.getByUid(params.uid);
+        }
+        return this.repository.users.getAll();
     }
 
     /**
@@ -31,8 +32,6 @@ export class User extends ModelBase {
      * @return {Promise<Object>}
      */
     async remove(params) {
-        //todo: implement
-
-        return params;
+        return this.repository.users.remove(params);
     }
 }

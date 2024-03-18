@@ -37,7 +37,7 @@ jobs:
           push: true
           file: ./dev-ops/docker/Dockerfile
           build-args: |
-#            BOOKMARKS_GOOGLE_CALLBACK_URL=${{ secrets.BOOKMARKS_GOOGLE_CALLBACK_URL }}
+            DATABASE_CONNECTION_URI=${{ vars.DATABASE_CONNECTION_URI }}
 #            BOOKMARKS_GOOGLE_CLIENT_ID=${{ secrets.BOOKMARKS_GOOGLE_CLIENT_ID }}
 #            BOOKMARKS_GOOGLE_CLIENT_SECRET=${{ secrets.BOOKMARKS_GOOGLE_CLIENT_SECRET }}
 #            BOOKMARKS_DB_HOST=${{ vars.BOOKMARKS_DB_HOST }}

@@ -25,6 +25,7 @@
     "express": "~4.16.1",
     "livr": "^2.3.3",
     "livr-extra-rules": "^1.2.1",
+    "mongodb": "^6.5.0",
     "uuid": "^9.0.1"
   },
   "devDependencies": {},

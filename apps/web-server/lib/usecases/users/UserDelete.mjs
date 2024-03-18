@@ -1,5 +1,5 @@
 import UseCaseBase from '../UseCaseBase.mjs';
-// import { User } from '../../models/index.mjs';
+import { User, NotFoundError } from '../../models/index.mjs';
 
 export class UserDelete extends UseCaseBase {
     static validationRules = {
@@ -7,7 +7,10 @@ export class UserDelete extends UseCaseBase {
     };
 
     async execute(params) {
-        // return new User().remove(params);
-        return { del: "Hello from user delete" };
+        const user = await new User().load(params);
+        if (!user) {
+            throw new NotFoundError(`User ${params} not found`);
+        }
+        return new User().remove(params);
     }
 }

@@ -1,5 +1,9 @@
 FROM node:20-alpine
 
+ARG DATABASE_CONNECTION_URI
+
+ENV DATABASE_CONNECTION_URI=$DATABASE_CONNECTION_URI
+
 WORKDIR /aws-ecs-fargate
 
 COPY ./dev-ops/docker/entrypoint.sh ./entrypoint.sh

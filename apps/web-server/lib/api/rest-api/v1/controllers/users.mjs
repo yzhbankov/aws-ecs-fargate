@@ -21,9 +21,10 @@ export default {
     post: makeRequestHandler(
         UserSave,
         (req) => ({
-            name: req.body.name,
-            bridge: req.body.bridge,
-            position: req.body.position,
+            email: req.body.email,
+            first_name: req.body.first_name,
+            second_name: req.body.second_name,
+            address: req.body.address,
         }),
         (result, res) => {
             res.json(result);

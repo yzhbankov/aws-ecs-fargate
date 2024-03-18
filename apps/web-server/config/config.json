@@ -4,6 +4,7 @@
     "port": "{{REDIS_PORT}}"
   },
   "db": {
-    "port": "{{DB_PORT}}"
+    "connection": "{{DATABASE_CONNECTION_URI}}",
+    "database": "{{DB_NAME}}"
   }
 }

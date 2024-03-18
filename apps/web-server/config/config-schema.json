@@ -2,7 +2,8 @@
   "listenPort": ["required", "positive_integer"],
   "db": ["required", {
     "nested_object": {
-      "port" : ["required", "positive_integer"]
+      "connection" : ["required", "string"],
+      "database" : ["required", "string"]
     }
   }],
   "redis": ["required", {
