@@ -1,6 +1,6 @@
 {
   "name": "web-server",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "type": "module",
   "engines": {
     "node": ">=14.15.4",
