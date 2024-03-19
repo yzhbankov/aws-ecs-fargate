@@ -27,11 +27,20 @@ export class User extends ModelBase {
 
     /**
      * @method
+     * @param {String} email - user email
+     * @return {Promise<Object>}
+     */
+    async findByEmail(email) {
+        return this.repository.users.getByEmail(email);
+    }
+
+    /**
+     * @method
      * @param {Object} params - options for read user in repository
      * @param {String} params.uid - user unique identifier
      * @return {Promise<Object>}
      */
     async remove(params) {
-        return this.repository.users.remove(params);
+        return this.repository.users.remove(params.uid);
     }
 }

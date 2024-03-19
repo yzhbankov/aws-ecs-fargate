@@ -1,5 +1,5 @@
 import UseCaseBase from '../UseCaseBase.mjs';
-import { User } from '../../models/index.mjs';
+import { User, ValidationError } from '../../models/index.mjs';
 
 export class UserSave extends UseCaseBase {
     static validationRules = {
@@ -10,6 +10,10 @@ export class UserSave extends UseCaseBase {
     };
 
     async execute(params) {
+        const user = await new User().findByEmail(params.email);
+        if (user) {
+            throw new ValidationError(`User with email ${params.email} already exists`);
+        }
         return new User().save(params);
     }
 }

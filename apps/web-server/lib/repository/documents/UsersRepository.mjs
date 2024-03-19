@@ -34,6 +34,16 @@ export class UsersRepository {
 
     /**
      * @method
+     * @param {String} email
+     * @return {Promise<Object>}
+     * */
+    async getByEmail(email) {
+        const query = { email };
+        return this.collection.findOne(query);
+    }
+
+    /**
+     * @method
      * @param {String} uid
      * @return {Promise<Object>}
      * */
