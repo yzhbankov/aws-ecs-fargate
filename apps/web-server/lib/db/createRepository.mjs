@@ -10,6 +10,7 @@ import { Repository } from '../repository/index.mjs';
  * @return {Object}
  */
 export function createRepository(options) {
+    console.log('createRepository ', options);
     const client = new MongoClient(options.connection);
     const db = client.db(options.database);
 
