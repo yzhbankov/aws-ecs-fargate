@@ -8,7 +8,8 @@
   }],
   "redis": ["required", {
     "nested_object": {
-      "port" : ["required", "positive_integer"]
+      "port" : ["required", "positive_integer"],
+      "host" : ["required", "string"]
     }
   }]
 }

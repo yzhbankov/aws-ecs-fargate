@@ -6,7 +6,7 @@ terraform {
     }
   }
   backend "s3" {
-    bucket = "amazon-bookmarks-terraform-state"
+    bucket = "amazon-ecs-terraform-state"
     key    = "terraform.tfstate"
     region = "us-east-1"
   }

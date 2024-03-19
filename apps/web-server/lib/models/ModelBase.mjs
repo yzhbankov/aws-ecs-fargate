@@ -8,8 +8,14 @@ export default class ModelBase {
      */
     repository = null;
 
+    /**
+     * @type {Cache}
+     */
+    cache = null;
+
     constructor() {
         this.repository = ModelBase.repositoryInstance;
+        this.cache = ModelBase.cacheInstance;
     }
 
     /**
@@ -20,10 +26,24 @@ export default class ModelBase {
 
     /**
      * @static
+     * @return {Cache}
+     */
+    static cacheInstance = null;
+
+    /**
+     * @static
      * @method
      */
     static setRepository(repository) {
         ModelBase.repositoryInstance = repository;
+    }
+
+    /**
+     * @static
+     * @method
+     */
+    static setCache(cache) {
+        ModelBase.cacheInstance = cache;
     }
 
     /**

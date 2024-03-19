@@ -1,6 +1,6 @@
 import { ErrorHandler } from '../../models/index.mjs';
 
-async function runUseCase(UseCase, { params }) {
+export async function runUseCase(UseCase, { params }) {
     return new UseCase().run(params);
 }
 
