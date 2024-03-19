@@ -14,7 +14,5 @@ RUN apk add --no-cache bash
 RUN apk add --no-cache stress-ng
 
 EXPOSE 3000
-EXPOSE 6379
-EXPOSE 27017
 
 ENTRYPOINT ./entrypoint.sh
