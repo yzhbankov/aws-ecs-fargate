@@ -38,10 +38,7 @@ jobs:
           file: ./dev-ops/docker/Dockerfile
           build-args: |
             DATABASE_CONNECTION_URI=${{ vars.DATABASE_CONNECTION_URI }}
-#            BOOKMARKS_GOOGLE_CLIENT_ID=${{ secrets.BOOKMARKS_GOOGLE_CLIENT_ID }}
-#            BOOKMARKS_GOOGLE_CLIENT_SECRET=${{ secrets.BOOKMARKS_GOOGLE_CLIENT_SECRET }}
-#            BOOKMARKS_DB_HOST=${{ vars.BOOKMARKS_DB_HOST }}
-#            BOOKMARKS_DOMAIN=${{ vars.BOOKMARKS_DOMAIN }}
+            REDIS_HOST=${{ vars.REDIS_HOST }}
           tags: |
             yzhbankov/web-server:${{ steps.set_version.outputs.no-dash }}
             yzhbankov/web-server:latest
