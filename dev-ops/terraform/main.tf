@@ -33,14 +33,8 @@ resource "aws_iam_role_policy_attachment" "ecs_task_policy_attachment" {
   role       = aws_iam_role.ecs_task_role.name
 }
 
-resource "aws_ecs_task_execution_role" "task_execution_role" {
-  name          = "EcsTaskExecutionRole"
-  task_role_arn = aws_iam_role.ecs_task_role.arn
-}
-
 resource "aws_ecs_task_definition" "web_server_task" {
   family                   = "${terraform.workspace}-yz-web-server-task"
-  execution_role_arn       = aws_ecs_task_execution_role.task_execution_role.task_role_arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   cpu                      = 1024
   memory                   = 2048
@@ -74,10 +68,11 @@ resource "aws_ecs_task_definition" "web_server_task" {
 }
 
 resource "aws_lb_target_group" "web_server_target_group" {
-  name     = "${terraform.workspace}-yz-target-group"
-  port     = 80
-  protocol = "HTTP"
-  vpc_id   = aws_vpc.web_server_vpc.id
+  name        = "${terraform.workspace}-yz-target-group"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = aws_vpc.web_server_vpc.id
+  target_type = "ip"
 
   health_check {
     healthy_threshold   = 2
@@ -93,23 +88,23 @@ resource "aws_ecs_service" "web_server_service" {
   name            = "${terraform.workspace}-yz-web-server-service"
   cluster         = aws_ecs_cluster.web_server_cluster.id
   task_definition = aws_ecs_task_definition.web_server_task.arn
-  launch_type     = "FARGATE"
   desired_count   = 1
 
   network_configuration {
     subnets          = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id, aws_subnet.subnet_c.id]
     security_groups  = [aws_security_group.web_server_group.id]
-    assign_public_ip = "ENABLED"
+    assign_public_ip = true
   }
 
   load_balancer {
     target_group_arn = aws_lb_target_group.web_server_target_group.arn
-    container_name   = "${terraform.workspace}-yz-container"
+    container_name   = "${terraform.workspace}-yz-web-server-container"
     container_port   = 3000
   }
 
   capacity_provider_strategy {
     capacity_provider = "FARGATE"
+    weight            = 1
   }
 
   deployment_controller {
@@ -148,51 +143,27 @@ resource "aws_lb_listener" "web_server_alb_listener" {
   }
 }
 
-resource "aws_launch_template" "web_server_launch_template" {
-  name_prefix   = "${terraform.workspace}-yz-launch-template"
-  image_id      = "ami-12345678"
-  instance_type = "t2.micro"
-  user_data     = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.web_server_cluster.name} >> /etc/ecs/ecs.config"
-}
+resource "aws_appautoscaling_policy" "ecs_scaling_policy" {
+  name               = "ecs-autoscaling-policy"
+  service_namespace  = "ecs"
+  scalable_dimension = "ecs:service:DesiredCount"
+  resource_id        = "service/${aws_ecs_cluster.web_server_cluster.name}/${aws_ecs_service.web_server_service.name}"
+  policy_type        = "TargetTrackingScaling"
 
-resource "aws_autoscaling_group" "web_server_autoscaling_group" {
-  name                = "${terraform.workspace}-yz-autoscaling-group"
-  max_size            = 3
-  min_size            = 1
-  desired_capacity    = 1
-  vpc_zone_identifier = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id, aws_subnet.subnet_c.id]
-  launch_template {
-    id      = aws_launch_template.web_server_launch_template.id
-    version = aws_launch_template.web_server_launch_template.latest_version
-  }
-}
-
-resource "aws_ecs_capacity_provider" "fargate" {
-  name = "FARGATE"
-  auto_scaling_group_provider {
-    auto_scaling_group_arn = aws_autoscaling_group.web_server_autoscaling_group.arn
-    managed_scaling {
-      maximum_scaling_step_size = 1000
-      minimum_scaling_step_size = 1
-      target_capacity           = 100
-      status                    = "ENABLED"
-    }
-  }
-}
-
-resource "aws_autoscaling_policy" "cpu_scaling_policy" {
-  name                      = "${terraform.workspace}-yz-scale-on-cpu"
-  scaling_adjustment        = 1
-  adjustment_type           = "ChangeInCapacity"
-  cooldown                  = 300
-  policy_type               = "TargetTrackingScaling"
-  estimated_instance_warmup = 300
-  autoscaling_group_name    = aws_autoscaling_group.web_server_autoscaling_group.name
-
-  target_tracking_configuration {
+  target_tracking_scaling_policy_configuration {
     predefined_metric_specification {
       predefined_metric_type = "ECSServiceAverageCPUUtilization"
     }
-    target_value = 70
+    target_value       = 70
+    scale_in_cooldown  = 300
+    scale_out_cooldown = 300
   }
+}
+
+resource "aws_appautoscaling_target" "ecs_scaling_target" {
+  max_capacity       = 3
+  min_capacity       = 1
+  resource_id        = "service/${aws_ecs_cluster.web_server_cluster.name}/${aws_ecs_service.web_server_service.name}"
+  service_namespace  = "ecs"
+  scalable_dimension = "ecs:service:DesiredCount"
 }

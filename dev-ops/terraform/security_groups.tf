@@ -27,6 +27,7 @@ resource "aws_security_group" "redis_group" {
 resource "aws_security_group" "web_server_group" {
   name        = "${terraform.workspace}-yz-web-server-group"
   description = "Security group for web servers"
+  vpc_id      = aws_vpc.web_server_vpc.id
 
   ingress {
     from_port   = 80
