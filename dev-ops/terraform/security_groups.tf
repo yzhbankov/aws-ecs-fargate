@@ -1,6 +1,7 @@
 resource "aws_security_group" "mongodb_group" {
   name        = "${terraform.workspace}-yz-mongodb-group"
   description = "Security group for MongoDB"
+  vpc_id      = aws_vpc.web_server_vpc.id
 
   ingress {
     from_port   = 27017
