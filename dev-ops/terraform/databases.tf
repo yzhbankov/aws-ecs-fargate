@@ -18,7 +18,6 @@ resource "aws_elasticache_cluster" "redis_cluster" {
   parameter_group_name       = "default.redis5.0.cluster.on"       # Adjust if needed
   parameter_group_family     = "redis5.0"                          # Adjust if needed
   security_group_ids         = [aws_security_group.redis_group.id] # Change to your desired security group IDs
-  at_rest_encryption_enabled = false                               # Disabling encryption at rest
   transit_encryption_enabled = true                                # Enabling encryption in transit
   snapshot_retention_limit   = 0                                   # Disabling automatic backups
 
