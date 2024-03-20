@@ -16,7 +16,6 @@ resource "aws_elasticache_cluster" "redis_cluster" {
   num_cache_nodes            = 1                                   # Change to the desired number of cache nodes
   port                       = 6379                                # Redis default port
   parameter_group_name       = "default.redis5.0.cluster.on"       # Adjust if needed
-  parameter_group_family     = "redis5.0"                          # Adjust if needed
   security_group_ids         = [aws_security_group.redis_group.id] # Change to your desired security group IDs
   transit_encryption_enabled = true                                # Enabling encryption in transit
   snapshot_retention_limit   = 0                                   # Disabling automatic backups
