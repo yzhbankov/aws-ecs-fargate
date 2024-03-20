@@ -33,14 +33,8 @@ resource "aws_iam_role_policy_attachment" "ecs_task_policy_attachment" {
   role       = aws_iam_role.ecs_task_role.name
 }
 
-resource "aws_ecs_task_execution_role" "task_execution_role" {
-  name          = "EcsTaskExecutionRole"
-  task_role_arn = aws_iam_role.ecs_task_role.arn
-}
-
 resource "aws_ecs_task_definition" "web_server_task" {
   family                   = "${terraform.workspace}-yz-web-server-task"
-  execution_role_arn       = aws_ecs_task_execution_role.task_execution_role.task_role_arn
   task_role_arn            = aws_iam_role.ecs_task_role.arn
   cpu                      = 1024
   memory                   = 2048
