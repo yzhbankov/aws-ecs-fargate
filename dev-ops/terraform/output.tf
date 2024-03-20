@@ -7,5 +7,5 @@ output "redis_connection_string" {
 }
 
 output "mongodb_connection_string" {
-  value = "mongodb://${aws_docdbelastic_cluster.mongodb_cluster.endpoint}"
+  value = "mongodb://${var.MONGO_USER}:${var.MONGO_PWD}@${aws_docdbelastic_cluster.mongodb_cluster.endpoint}?ssl=true&retryWrites=false"
 }

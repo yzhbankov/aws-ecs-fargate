@@ -1,33 +1,21 @@
-resource "aws_elasticache_subnet_group" "subnet_group" {
-  name       = "${terraform.workspace}-yz-redis-subnet-group"
-  subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id, aws_subnet.subnet_c.id] # Change to match your subnet IDs
-}
-
-resource "aws_docdb_subnet_group" "docdb_subnet_group" {
-  name       = "${terraform.workspace}-yz-docdb-subnet-group"
-  subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id, aws_subnet.subnet_c.id] # Change to match your subnet IDs
-}
-
-resource "aws_elasticache_parameter_group" "redis_parameter_group" {
-  name        = "redis7-parameter-group"
-  family      = "redis7"
-  description = "Parameter group for Redis version 7"
-}
-
-resource "aws_elasticache_cluster" "redis_cluster" {
-  cluster_id               = "${terraform.workspace}-yz-redis-cluster"
-  engine                   = "redis"
-  engine_version           = "7.1"
-  node_type                = "cache.t2.micro" # Change to your desired node type
-  num_cache_nodes          = 1                # Change to the desired number of cache nodes
-  port                     = 6379             # Redis default port
-  parameter_group_name     = aws_elasticache_parameter_group.redis_parameter_group.name
-  security_group_ids       = [aws_security_group.redis_group.id] # Change to your desired security group IDs
-  snapshot_retention_limit = 0                                   # Disabling automatic backups
-
-  tags = {
-    Name = "Web Server Redis Cluster"
+resource "aws_elasticache_serverless_cache" "example" {
+  engine = "redis"
+  name   = "${terraform.workspace}-yz-redis-cluster"
+  cache_usage_limits {
+    data_storage {
+      maximum = 1
+      unit    = "GB"
+    }
+    ecpu_per_second {
+      maximum = 5
+    }
   }
+  daily_snapshot_time      = "09:00"
+  description              = "Redis Cache Server"
+  major_engine_version     = "7"
+  snapshot_retention_limit = 1
+  security_group_ids       = [aws_security_group.redis_group.id]
+  subnet_ids               = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id, aws_subnet.subnet_c.id]
 }
 
 resource "aws_docdbelastic_cluster" "mongodb_cluster" {
