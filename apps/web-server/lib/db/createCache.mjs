@@ -13,7 +13,8 @@ export function createCache(options) {
     console.log('createCache ', options);
     const client = redis.createClient({
         host: options.host,
-        port: options.port // Redis default port
+        port: options.port, // Redis default port
+        tls: {}
     });
     return new Cache(client);
 }
