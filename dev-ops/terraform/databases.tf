@@ -21,7 +21,6 @@ resource "aws_elasticache_cluster" "redis_cluster" {
   at_rest_encryption_enabled = false                               # Disabling encryption at rest
   transit_encryption_enabled = true                                # Enabling encryption in transit
   snapshot_retention_limit   = 0                                   # Disabling automatic backups
-  automatic_failover_enabled = false                               # Disabling automatic failover
 
   tags = {
     Name = "Web Server Redis Cluster"
