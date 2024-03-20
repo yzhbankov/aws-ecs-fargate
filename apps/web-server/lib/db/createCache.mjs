@@ -10,11 +10,9 @@ import { Cache } from '../cache/index.mjs';
  * @return {Object}
  */
 export function createCache(options) {
-    console.log('createCache ', options);
+    console.log('options ', options);
     const client = redis.createClient({
-        host: options.host,
-        port: options.port, // Redis default port
-        tls: {}
+        url: `redis://${options.host}:${options.port}`
     });
     return new Cache(client);
 }
