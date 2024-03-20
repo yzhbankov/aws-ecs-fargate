@@ -93,7 +93,7 @@ resource "aws_ecs_service" "web_server_service" {
   network_configuration {
     subnets          = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id, aws_subnet.subnet_c.id]
     security_groups  = [aws_security_group.web_server_group.id]
-    assign_public_ip = "ENABLED"
+    assign_public_ip = true
   }
 
   load_balancer {
