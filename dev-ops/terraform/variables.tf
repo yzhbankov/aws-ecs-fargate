@@ -3,9 +3,9 @@ variable "AWS_REGION" {
 }
 
 variable "MONGO_USER" {
-  default = "mongo_user"
+  default = "mongouser"
 }
 
 variable "MONGO_PWD" {
-  default = "mongo_pwd"
+  default = "mongopassword"
 }
