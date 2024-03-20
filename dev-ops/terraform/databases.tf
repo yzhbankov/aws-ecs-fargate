@@ -1,15 +1,6 @@
 resource "aws_elasticache_serverless_cache" "example" {
   engine = "redis"
   name   = "${terraform.workspace}-yz-redis-cluster"
-  cache_usage_limits {
-    data_storage {
-      maximum = 1
-      unit    = "GB"
-    }
-    ecpu_per_second {
-      maximum = 5
-    }
-  }
   daily_snapshot_time      = "09:00"
   description              = "Redis Cache Server"
   major_engine_version     = "7"
