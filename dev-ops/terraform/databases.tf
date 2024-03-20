@@ -26,22 +26,6 @@ resource "aws_elasticache_cluster" "redis_cluster" {
 resource "aws_docdb_cluster" "mongodb_cluster" {
   cluster_identifier      = "${terraform.workspace}-yz-mongodb-cluster"
   engine                  = "docdb"
-  master_username         = var.MONGO_USER
-  master_password         = var.MONGO_PWD
-  backup_retention_period = 5
-  preferred_backup_window = "07:00-09:00"
-  skip_final_snapshot     = true
-  port                    = 27017
-  vpc_security_group_ids  = [aws_security_group.mongodb_group.id]
-  security_group_ids      = [aws_security_group.redis_group.id] # Change to your desired security group IDs
-  subnet_group_name       = aws_elasticache_subnet_group.subnet_group.name
-}
-
-
-
-resource "aws_docdb_cluster" "mongodb_cluster" {
-  cluster_identifier      = "${terraform.workspace}-yz-mongodb-cluster"
-  engine                  = "docdb"
   master_username         = var.MONGO_USER # Replace with your desired master username
   master_password         = var.MONGO_PWD  # Replace with your desired master password
   backup_retention_period = 7              # Adjust as needed
