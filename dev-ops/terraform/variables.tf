@@ -9,3 +9,7 @@ variable "MONGO_USER" {
 variable "MONGO_PWD" {
   default = "mongopassword"
 }
+
+variable "DOCKER_IMAGE" {
+  default = "yzhbankov/web-server:latest"
+}
