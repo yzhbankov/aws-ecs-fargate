@@ -3,6 +3,11 @@ resource "aws_elasticache_subnet_group" "subnet_group" {
   subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id, aws_subnet.subnet_c.id] # Change to match your subnet IDs
 }
 
+resource "aws_docdb_subnet_group" "docdb_subnet_group" {
+  name       = "${terraform.workspace}-yz-docdb-subnet-group"
+  subnet_ids = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id, aws_subnet.subnet_c.id] # Change to match your subnet IDs
+}
+
 resource "aws_elasticache_cluster" "redis_cluster" {
   cluster_id                 = "${terraform.workspace}-yz-redis-cluster"
   engine                     = "redis"
@@ -34,8 +39,7 @@ resource "aws_docdb_cluster" "mongodb_cluster" {
   port                    = 27017          # MongoDB default port
   cluster_instance_count  = 1              # Number of instances per shard
   vpc_security_group_ids  = [aws_security_group.mongodb_group.id]
-  security_group_ids      = [aws_security_group.redis_group.id] # Change to your desired security group IDs
-  subnet_group_name       = aws_elasticache_subnet_group.subnet_group.name
+  db_subnet_group_name    = aws_docdb_subnet_group.docdb_subnet_group.name
   apply_immediately       = true # Apply changes immediately
 
   tags = {
