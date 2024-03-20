@@ -104,6 +104,7 @@ resource "aws_ecs_service" "web_server_service" {
 
   capacity_provider_strategy {
     capacity_provider = "FARGATE"
+    weight            = 1
   }
 
   deployment_controller {
@@ -144,9 +145,9 @@ resource "aws_lb_listener" "web_server_alb_listener" {
 
 resource "aws_launch_template" "web_server_launch_template" {
   name_prefix   = "${terraform.workspace}-yz-launch-template"
-  image_id      = "ami-12345678"
-  instance_type = "t2.micro"
-  user_data     = "#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.web_server_cluster.name} >> /etc/ecs/ecs.config"
+  image_id      = "ami-062c116e449466e7f"
+  instance_type = "t3.micro"
+  user_data     = base64encode("#!/bin/bash\necho ECS_CLUSTER=${aws_ecs_cluster.web_server_cluster.name} >> /etc/ecs/ecs.config")
 }
 
 resource "aws_autoscaling_group" "web_server_autoscaling_group" {
@@ -155,6 +156,7 @@ resource "aws_autoscaling_group" "web_server_autoscaling_group" {
   min_size            = 1
   desired_capacity    = 1
   vpc_zone_identifier = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id, aws_subnet.subnet_c.id]
+
   launch_template {
     id      = aws_launch_template.web_server_launch_template.id
     version = aws_launch_template.web_server_launch_template.latest_version
