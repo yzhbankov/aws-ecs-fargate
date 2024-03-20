@@ -14,6 +14,7 @@ resource "aws_security_group" "mongodb_group" {
 resource "aws_security_group" "redis_group" {
   name        = "${terraform.workspace}-yz-redis-group"
   description = "Security group for Redis"
+  vpc_id      = aws_vpc.web_server_vpc.id
 
   ingress {
     from_port   = 6379
