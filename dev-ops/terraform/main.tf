@@ -97,7 +97,7 @@ resource "aws_ecs_service" "web_server_service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.web_server_target_group.arn
-    container_name   = "${terraform.workspace}-yz-container"
+    container_name   = "${terraform.workspace}-yz-web-server-container"
     container_port   = 3000
   }
 
