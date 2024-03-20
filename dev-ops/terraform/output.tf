@@ -2,8 +2,12 @@ output "aws_region" {
   value = var.AWS_REGION
 }
 
-output "redis_connection_string" {
-  value = aws_elasticache_serverless_cache.redis_cluster.endpoint
+output "redis_connection_address" {
+  value = aws_elasticache_serverless_cache.redis_cluster.address
+}
+
+output "redis_connection_port" {
+  value = aws_elasticache_serverless_cache.redis_cluster.port
 }
 
 output "mongodb_connection_string" {

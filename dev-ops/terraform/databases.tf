@@ -1,6 +1,6 @@
 resource "aws_elasticache_serverless_cache" "redis_cluster" {
-  engine = "redis"
-  name   = "${terraform.workspace}-yz-redis-cluster"
+  engine                   = "redis"
+  name                     = "${terraform.workspace}-yz-redis-cluster"
   daily_snapshot_time      = "09:00"
   description              = "Redis Cache Server"
   major_engine_version     = "7"
