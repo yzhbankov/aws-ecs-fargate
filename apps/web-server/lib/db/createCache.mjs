@@ -12,7 +12,11 @@ import { Cache } from '../cache/index.mjs';
 export function createCache(options) {
     console.log('options ', options);
     const client = redis.createClient({
-        url: `redis://${options.host}:${options.port}`
+        url: `redis://${options.host}:${options.port}`,
+        socket: {
+            tls: true,
+            rejectUnauthorized: false,
+        }
     });
     return new Cache(client);
 }
