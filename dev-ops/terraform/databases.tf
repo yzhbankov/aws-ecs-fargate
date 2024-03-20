@@ -37,7 +37,6 @@ resource "aws_docdb_cluster" "mongodb_cluster" {
   preferred_backup_window = "07:00-09:00"  # Adjust as needed
   skip_final_snapshot     = true           # Adjust as needed
   port                    = 27017          # MongoDB default port
-  cluster_instance_count  = 1              # Number of instances per shard
   vpc_security_group_ids  = [aws_security_group.mongodb_group.id]
   db_subnet_group_name    = aws_docdb_subnet_group.docdb_subnet_group.name
   apply_immediately       = true # Apply changes immediately
