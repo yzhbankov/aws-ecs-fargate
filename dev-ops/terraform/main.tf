@@ -147,7 +147,7 @@ resource "aws_appautoscaling_policy" "ecs_scaling_policy" {
   name               = "ecs-autoscaling-policy"
   service_namespace  = "ecs"
   scalable_dimension = "ecs:service:DesiredCount"
-  resource_id        = "${aws_ecs_service.web_server_service.cluster}/${aws_ecs_service.web_server_service.name}"
+  resource_id        = "service/${aws_ecs_cluster.web_server_cluster.name}/${aws_ecs_service.web_server_service.name}"
   policy_type        = "TargetTrackingScaling"
 
   target_tracking_scaling_policy_configuration {
@@ -163,7 +163,7 @@ resource "aws_appautoscaling_policy" "ecs_scaling_policy" {
 resource "aws_appautoscaling_target" "ecs_scaling_target" {
   max_capacity       = 3
   min_capacity       = 1
-  resource_id        = "${aws_ecs_service.web_server_service.cluster}/${aws_ecs_service.web_server_service.name}"
+  resource_id        = "service/${aws_ecs_cluster.web_server_cluster.name}/${aws_ecs_service.web_server_service.name}"
   service_namespace  = "ecs"
   scalable_dimension = "ecs:service:DesiredCount"
 }
