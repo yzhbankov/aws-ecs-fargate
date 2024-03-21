@@ -1,8 +1,5 @@
 resource "aws_ecs_cluster" "web_server_cluster" {
   name = "${terraform.workspace}_yz_web_server_cluster"
-
-  capacity_providers = [
-  ]
 }
 
 resource "aws_ecs_cluster_capacity_providers" "capacity_providers" {
@@ -69,7 +66,7 @@ resource "aws_ecs_task_definition" "web_server_task" {
       memory = 2048
       portMappings = [
         {
-          containerPort = 3000,
+          containerPort = var.DOCKER_PORT,
           protocol      = "tcp",
           appProtocol   = "http"
         }
@@ -134,7 +131,7 @@ resource "aws_ecs_service" "web_server_service" {
   load_balancer {
     target_group_arn = aws_lb_target_group.web_server_target_group.arn
     container_name   = "${terraform.workspace}-yz-web-server-container"
-    container_port   = 3000
+    container_port   = var.DOCKER_PORT
   }
 
   capacity_provider_strategy {

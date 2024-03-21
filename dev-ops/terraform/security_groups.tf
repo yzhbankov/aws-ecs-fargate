@@ -4,8 +4,8 @@ resource "aws_security_group" "mongodb_group" {
   vpc_id      = aws_vpc.web_server_vpc.id
 
   ingress {
-    from_port   = 27017
-    to_port     = 27017
+    from_port   = var.MONGO_PORT
+    to_port     = var.MONGO_PORT
     protocol    = "tcp"
     cidr_blocks = [aws_vpc.web_server_vpc.cidr_block]
   }
@@ -13,8 +13,8 @@ resource "aws_security_group" "mongodb_group" {
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "-1"          # Allows all protocols (TCP, UDP, ICMP, etc.)
-    cidr_blocks = ["0.0.0.0/0"] # Allow all IP addresses
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
@@ -24,8 +24,8 @@ resource "aws_security_group" "redis_group" {
   vpc_id      = aws_vpc.web_server_vpc.id
 
   ingress {
-    from_port   = 6379
-    to_port     = 6379
+    from_port   = var.REDIS_PORT
+    to_port     = var.REDIS_PORT
     protocol    = "tcp"
     cidr_blocks = [aws_vpc.web_server_vpc.cidr_block]
   }
@@ -33,8 +33,8 @@ resource "aws_security_group" "redis_group" {
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "-1"          # Allows all protocols (TCP, UDP, ICMP, etc.)
-    cidr_blocks = ["0.0.0.0/0"] # Allow all IP addresses
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
@@ -51,8 +51,8 @@ resource "aws_security_group" "web_server_group" {
   }
 
   ingress {
-    from_port   = 3000
-    to_port     = 3000
+    from_port   = var.DOCKER_PORT
+    to_port     = var.DOCKER_PORT
     protocol    = "tcp"
     cidr_blocks = [aws_vpc.web_server_vpc.cidr_block]
   }
@@ -67,7 +67,7 @@ resource "aws_security_group" "web_server_group" {
   egress {
     from_port   = 0
     to_port     = 0
-    protocol    = "-1"          # Allows all protocols (TCP, UDP, ICMP, etc.)
-    cidr_blocks = ["0.0.0.0/0"] # Allow all IP addresses
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
