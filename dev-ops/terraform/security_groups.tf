@@ -9,6 +9,13 @@ resource "aws_security_group" "mongodb_group" {
     protocol    = "tcp"
     cidr_blocks = [aws_vpc.web_server_vpc.cidr_block]
   }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"          # Allows all protocols (TCP, UDP, ICMP, etc.)
+    cidr_blocks = ["0.0.0.0/0"] # Allow all IP addresses
+  }
 }
 
 resource "aws_security_group" "redis_group" {
@@ -21,6 +28,13 @@ resource "aws_security_group" "redis_group" {
     to_port     = 6379
     protocol    = "tcp"
     cidr_blocks = [aws_vpc.web_server_vpc.cidr_block]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"          # Allows all protocols (TCP, UDP, ICMP, etc.)
+    cidr_blocks = ["0.0.0.0/0"] # Allow all IP addresses
   }
 }
 
@@ -37,9 +51,23 @@ resource "aws_security_group" "web_server_group" {
   }
 
   ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = [aws_vpc.web_server_vpc.cidr_block]
+  }
+
+  ingress {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"          # Allows all protocols (TCP, UDP, ICMP, etc.)
+    cidr_blocks = ["0.0.0.0/0"] # Allow all IP addresses
   }
 }
