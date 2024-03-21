@@ -94,8 +94,8 @@ resource "aws_ecs_task_definition" "web_server_task" {
 }
 
 resource "aws_cloudwatch_log_group" "ecs_log_group" {
-  name              = "/ecs/${terraform.workspace}-yz-web-server-task}" # Change to your desired log group name
-  retention_in_days = 7                                                 # Change as per your retention policy
+  name              = "/ecs/${terraform.workspace}-yz-web-server-task"
+  retention_in_days = 7
 }
 
 resource "aws_lb_target_group" "web_server_target_group" {
