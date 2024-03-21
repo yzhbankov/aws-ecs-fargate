@@ -2,6 +2,17 @@ resource "aws_ecs_cluster" "web_server_cluster" {
   name = "${terraform.workspace}_yz_web_server_cluster"
 }
 
+resource "aws_ecs_cluster_capacity_providers" "capacity_providers" {
+  cluster_name       = aws_ecs_cluster.web_server_cluster.name
+  capacity_providers = ["FARGATE"]
+
+  default_capacity_provider_strategy {
+    base              = 1
+    weight            = 100
+    capacity_provider = "FARGATE"
+  }
+}
+
 resource "aws_iam_role" "ecs_task_role" {
   name = "${terraform.workspace}_yz_ecs_task_role"
   assume_role_policy = jsonencode({
@@ -36,10 +47,16 @@ resource "aws_iam_role_policy_attachment" "ecs_task_policy_attachment" {
 resource "aws_ecs_task_definition" "web_server_task" {
   family                   = "${terraform.workspace}-yz-web-server-task"
   task_role_arn            = aws_iam_role.ecs_task_role.arn
+  execution_role_arn       = aws_iam_role.ecs_task_role.arn
   cpu                      = 1024
   memory                   = 2048
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
+
+  runtime_platform {
+    operating_system_family = "LINUX"
+    cpu_architecture        = "X86_64"
+  }
 
   container_definitions = jsonencode([
     {
@@ -49,8 +66,9 @@ resource "aws_ecs_task_definition" "web_server_task" {
       memory = 2048
       portMappings = [
         {
-          containerPort = 3000,
+          containerPort = var.DOCKER_PORT,
           protocol      = "tcp",
+          appProtocol   = "http"
         }
       ]
       environment = [
@@ -63,8 +81,21 @@ resource "aws_ecs_task_definition" "web_server_task" {
           value = aws_elasticache_serverless_cache.redis_cluster.endpoint[0].address
         }
       ]
+      logConfiguration : {
+        logDriver : "awslogs",
+        options : {
+          awslogs-group : "${aws_cloudwatch_log_group.ecs_log_group.name}",
+          awslogs-region : var.AWS_REGION, # Change to your desired AWS region
+          awslogs-stream-prefix : "ecs"
+        }
+      }
     }
   ])
+}
+
+resource "aws_cloudwatch_log_group" "ecs_log_group" {
+  name              = "/ecs/${terraform.workspace}-yz-web-server-task"
+  retention_in_days = 7
 }
 
 resource "aws_lb_target_group" "web_server_target_group" {
@@ -85,10 +116,11 @@ resource "aws_lb_target_group" "web_server_target_group" {
 }
 
 resource "aws_ecs_service" "web_server_service" {
-  name            = "${terraform.workspace}-yz-web-server-service"
-  cluster         = aws_ecs_cluster.web_server_cluster.id
-  task_definition = aws_ecs_task_definition.web_server_task.arn
-  desired_count   = 1
+  name             = "${terraform.workspace}-yz-web-server-service"
+  cluster          = aws_ecs_cluster.web_server_cluster.id
+  task_definition  = aws_ecs_task_definition.web_server_task.arn
+  platform_version = "LATEST"
+  desired_count    = 1
 
   network_configuration {
     subnets          = [aws_subnet.subnet_a.id, aws_subnet.subnet_b.id, aws_subnet.subnet_c.id]
@@ -99,11 +131,12 @@ resource "aws_ecs_service" "web_server_service" {
   load_balancer {
     target_group_arn = aws_lb_target_group.web_server_target_group.arn
     container_name   = "${terraform.workspace}-yz-web-server-container"
-    container_port   = 3000
+    container_port   = var.DOCKER_PORT
   }
 
   capacity_provider_strategy {
     capacity_provider = "FARGATE"
+    base              = 0
     weight            = 1
   }
 
