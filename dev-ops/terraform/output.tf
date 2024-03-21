@@ -13,3 +13,7 @@ output "redis_connection_port" {
 output "mongodb_connection_string" {
   value = "mongodb://${var.MONGO_USER}:${var.MONGO_PWD}@${aws_docdbelastic_cluster.mongodb_cluster.endpoint}?ssl=true&retryWrites=false"
 }
+
+output "alb_public_url" {
+  value = "http://${aws_lb.web_server_load_balancer.dns_name}"
+}
