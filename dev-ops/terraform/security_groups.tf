@@ -1,4 +1,4 @@
-resource "aws_security_group" "mongodb_group" {
+resource "aws_security_group" "mongodb_sg" {
   name        = "${terraform.workspace}-yz-mongodb-group"
   description = "Security group for MongoDB"
   vpc_id      = aws_vpc.web_server_vpc.id
@@ -18,7 +18,7 @@ resource "aws_security_group" "mongodb_group" {
   }
 }
 
-resource "aws_security_group" "redis_group" {
+resource "aws_security_group" "redis_sg" {
   name        = "${terraform.workspace}-yz-redis-group"
   description = "Security group for Redis"
   vpc_id      = aws_vpc.web_server_vpc.id
@@ -38,7 +38,7 @@ resource "aws_security_group" "redis_group" {
   }
 }
 
-resource "aws_security_group" "web_server_group" {
+resource "aws_security_group" "web_server_sg" {
   name        = "${terraform.workspace}-yz-web-server-group"
   description = "Security group for web servers"
   vpc_id      = aws_vpc.web_server_vpc.id
